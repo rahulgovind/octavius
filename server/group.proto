@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package main;
+
+import "google/protobuf/any.proto";
+
+message Message {
+    enum MessageType {
+        INTRO_SYN = 0;
+        INTRO_ACK = 1;
+        PING = 2;
+        PONG = 3;
+        ADD = 4;
+        INTRO_BYE = 5; // Tell Introducer it's leaving
+        GROUP_BYE = 6; // Tell Group it's leaving
+        GOSSIP = 7;
+        SUSPECT = 8;
+    }
+
+    string addr = 1;
+    MessageType message_type = 2;
+    google.protobuf.Any details = 3;
+}
+
+message ProtoMember {
+    string addr = 1;
+    string rpcAddr = 2;
+    uint64 incarnation = 3;
+}
+
+message IntroducerResponse {
+    repeated ProtoMember members = 1;
+    uint64 incarnation = 2;
+}
+
+message GossipDetails {
+    uint32 ttl = 1;
+    uint32 b = 2;
+    uint32 T = 3;
+    uint64 ts = 4;
+    ProtoMember src = 6;
+    Message message = 7;
+}
+
+message JoinMessage {
+    ProtoMember member = 1;
+}
+
+message IntroMessage {
+    ProtoMember member = 1;
+}
+
+message PingMessage {
+    ProtoMember src = 1;
+    uint64 seq = 2;
+}
+
+message PongMessage {
+    uint64 seq = 1;
+}
+
+message SuspectMessage {
+    ProtoMember suspect = 1;
+    uint64 ts = 2;
+}
